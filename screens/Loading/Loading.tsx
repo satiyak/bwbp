@@ -14,7 +14,7 @@ export default class LoadingScreen extends React.Component {
     // During problem 1, navigate to Login.
     this.navigateLogin();
     // When you start problem 2, comment out the line above, and comment in the line below to navigate to Jobs.
-    // this.navigateApp();
+    //this.navigateApp();
   }
 
   async loadUser() {
