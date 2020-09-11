@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { View } from 'react-native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { GlobalContext } from '@components/ContextProvider';
@@ -64,6 +64,7 @@ export class JobsScreen extends React.Component<JobsScreenProps, JobsScreenState
         thursday: true,
         friday: false,
       },
+      
     };
   }
 
@@ -98,17 +99,41 @@ export class JobsScreen extends React.Component<JobsScreenProps, JobsScreenState
   };
 
   /**
+   * EXTRA: Overlay setup
+   */
+  //const
+
+
+  /**
    * TODO: Write filterJobs function that updates the components' state with jobs that align with the users' weekly schedule.
    */
   filterJobs = (jobs: JobRecord[], availability: Availability): void => {
     // Step 0: Clone the jobs input
     const newJobs: JobRecord[] = cloneDeep(jobs);
-    console.log(newJobs, availability);
+    const filteredJobs: JobRecord[] = [];
+    
+    // Step 0.5: List and capitalize user availabilty
+    const capitalize = (str: string) => {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+    const availableDays: string[] = []
+    for (const [day, available] of Object.entries(availability)) {
+      if (available == false) {
+        availableDays.push(day);
+      }
+    }
+    const finalAvailableDays = availableDays.map(capitalize);
 
     // Step 1: Remove jobs where the schedule doesn't align with the users' availability.
-
+    for (const job of Object.entries(newJobs)) {
+      const jobDays = job[1].schedule;
+      const sharedDays = finalAvailableDays.filter(day => jobDays.includes(day));
+      if (sharedDays.length == 0) {
+        filteredJobs.push(job[1]);
+      }
+    }
     // Step 2: Save into state
-    this.setState({ jobs: newJobs });
+    this.setState({ jobs: filteredJobs });
   };
 
   getStatus = (jobs: JobRecord[]): Status => {
